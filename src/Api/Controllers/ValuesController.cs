@@ -26,6 +26,7 @@ namespace Api.Controllers
 
 
         // POST api/values
+        [HttpPost]
         public HttpResponseMessage Post([FromBody] Product product)
         {
             return Request.CreateResponse(HttpStatusCode.Created);
@@ -33,6 +34,7 @@ namespace Api.Controllers
 
 
         // PUT api/values/5
+        [HttpPut]
         public HttpResponseMessage Put(int id, [FromBody]Product product)
         {
             return Request.CreateResponse(HttpStatusCode.OK);
@@ -40,6 +42,7 @@ namespace Api.Controllers
 
 
         // DELETE api/values/5
+        [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {
             return Request.CreateResponse(HttpStatusCode.OK);
