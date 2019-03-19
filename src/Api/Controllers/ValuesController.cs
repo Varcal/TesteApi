@@ -11,10 +11,15 @@ namespace Api.Controllers
         // GET api/values
         public HttpResponseMessage Get()
         {
-            var products = new List<Product>{ new Product() { Id = 1, Nome = "Teste" }, new Product() { Id = 2, Nome = "Teste 2" } };
+            var products = new List<Product>
+            {
+                new Product() { Id = 1, Nome = "Teste" },
+                new Product() { Id = 2, Nome = "Teste 2" }
+            };
 
             return Request.CreateResponse(products);
         }
+
 
         // GET api/values/5
         public HttpResponseMessage Get(int id)
@@ -26,7 +31,6 @@ namespace Api.Controllers
 
 
         // POST api/values
-        [HttpPost]
         public HttpResponseMessage Post([FromBody] Product product)
         {
             return Request.CreateResponse(HttpStatusCode.Created);
@@ -34,7 +38,6 @@ namespace Api.Controllers
 
 
         // PUT api/values/5
-        [HttpPut]
         public HttpResponseMessage Put(int id, [FromBody]Product product)
         {
             return Request.CreateResponse(HttpStatusCode.OK);
@@ -42,7 +45,6 @@ namespace Api.Controllers
 
 
         // DELETE api/values/5
-        [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {
             return Request.CreateResponse(HttpStatusCode.OK);
