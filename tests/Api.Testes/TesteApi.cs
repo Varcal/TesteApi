@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -17,19 +18,25 @@ namespace Api.Testes
     public class TesteApi
     {
         private const int Id = 10;
+        private ValuesController _controller;
+        private readonly string _url = ConfigurationManager.AppSettings["url"];
+
+        [TestInitialize]
+        public void InitializeTests()
+        {
+            _controller = new ValuesController
+            {
+                Request = new HttpRequestMessage(),
+                Configuration = new HttpConfiguration()
+            };
+        }
 
         #region Controllers da Api
         [TestMethod]
         [TestCategory("Teste Controller Api")]
         public void Testando_o_controlller_metodo_GET()
-        {
-            var controller = new ValuesController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-
-            var response = controller.Get(Id);
+        {           
+            var response = _controller.Get(Id);
 
             var product = JsonConvert.DeserializeObject<Product>(response.Content.ReadAsStringAsync().Result);
             Assert.AreEqual(Id, product.Id);
@@ -39,14 +46,8 @@ namespace Api.Testes
         [TestMethod]
         [TestCategory("Teste Controller Api")]
         public void Testando_o_controlller_metodo_GET_por_id()
-        {
-            var controller = new ValuesController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-
-            var response = controller.Get(Id);
+        {          
+            var response = _controller.Get(Id);
 
             var product = JsonConvert.DeserializeObject<Product>(response.Content.ReadAsStringAsync().Result);
             Assert.AreEqual(Id, product.Id);
@@ -57,14 +58,7 @@ namespace Api.Testes
         [TestCategory("Teste Controller Api")]
         public void Testando_o_controlller_metodo_POST()
         {
-            var controller = new ValuesController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-
-            var response = controller.Post(new Product() { Nome = "Teste" });
-
+            var response = _controller.Post(new Product() { Nome = "Teste" });
 
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
@@ -91,17 +85,10 @@ namespace Api.Testes
         [TestCategory("Teste Controller Api")]
         public void Testando_o_controlller_metodo_DELETE()
         {
-            var controller = new ValuesController
-            {
-                Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
-            };
-
-            var response = controller.Delete(Id);
-
+            var response = _controller.Delete(Id);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        } 
+        }
         #endregion
 
 
@@ -112,11 +99,13 @@ namespace Api.Testes
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:54964/");
+                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
                 var response = client.GetAsync($"api/values").Result;
                 var products = JsonConvert.DeserializeObject<IList<Product>>(response.Content.ReadAsStringAsync().Result);
+
                 Assert.IsTrue(products.Any());
             }
         }
@@ -128,11 +117,13 @@ namespace Api.Testes
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:54964/");
+                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
                 var response = client.GetAsync($"api/values/{Id}").Result;
                 var product = JsonConvert.DeserializeObject<Product>(response.Content.ReadAsStringAsync().Result);
+
                 Assert.AreEqual(Id, product.Id);
             }
         }
@@ -144,7 +135,7 @@ namespace Api.Testes
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:54964/");
+                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -162,7 +153,7 @@ namespace Api.Testes
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:54964/");
+                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -182,7 +173,7 @@ namespace Api.Testes
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:54964/");
+                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -190,9 +181,8 @@ namespace Api.Testes
 
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             }
-        } 
+        }
         #endregion
-
     }
 }
 
